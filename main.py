@@ -57,7 +57,7 @@ def main():
     )
 
     show_window = config_mgr.get('output', 'show_window', True)
-    window_name = config_mgr.get('output', 'window_name', 'Object Detection')
+    window_name = str(config_mgr.get('output', 'window_name', 'Object Detection'))
     show_bbox = True
     show_info = True
     is_paused = False
@@ -67,6 +67,10 @@ def main():
     frame_id = 0
     total_objects = 0
     start_session_time = time.time()
+
+    # Initialize so they are always defined (used in key handler outside the if-not-paused block)
+    frame = None
+    annotated_frame = None
 
     # Variables for FPS calculation
     fps_calc_start = time.time()
@@ -112,7 +116,7 @@ def main():
                         annotated_frame, 
                         current_fps, 
                         len(detections),
-                        config_mgr.get('output', 'show_timestamp', False)
+                        bool(config_mgr.get('output', 'show_timestamp', False))
                     )
 
                 # Outputs

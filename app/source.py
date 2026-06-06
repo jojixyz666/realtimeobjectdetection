@@ -1,5 +1,6 @@
 import cv2
 import time
+import numpy as np
 from app.utils import get_logger
 
 logger = get_logger()
@@ -24,7 +25,7 @@ class VideoSource:
             return False
         return True
 
-    def read(self) -> tuple[bool, object]:
+    def read(self) -> tuple[bool, np.ndarray | None]:
         if self.cap is None or not self.cap.isOpened():
             return False, None
 
