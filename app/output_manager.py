@@ -1,6 +1,7 @@
 import os
 import cv2
 import json
+import numpy as np
 from datetime import datetime
 from app.utils import get_logger
 
@@ -32,22 +33,22 @@ class OutputManager:
             
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         video_path = os.path.join(self.output_dir, f"output_{timestamp}.mp4")
-        fourcc = cv2.VideoWriter_fourcc(*self.video_codec)
+        fourcc = cv2.VideoWriter.fourcc(*self.video_codec)
         self.video_writer = cv2.VideoWriter(video_path, fourcc, fps, resolution)
         logger.info(f"Video writer initialized: {video_path} @ {fps}fps")
 
-    def write_frame(self, frame: object) -> None:
+    def write_frame(self, frame: np.ndarray) -> None:
         if self.video_writer is not None:
             self.video_writer.write(frame)
 
-    def save_screenshot(self, frame: object) -> str:
+    def save_screenshot(self, frame: np.ndarray) -> str:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")[:-3]
         img_path = os.path.join(self.output_dir, f"screenshot_{timestamp}.jpg")
         cv2.imwrite(img_path, frame)
         logger.info(f"Screenshot saved: {img_path}")
         return img_path
 
-    def save_image_frame(self, frame: object, frame_id: int) -> None:
+    def save_image_frame(self, frame: np.ndarray, frame_id: int) -> None:
         if self.save_images:
             img_path = os.path.join(self.output_dir, f"frame_{frame_id:06d}.jpg")
             cv2.imwrite(img_path, frame)

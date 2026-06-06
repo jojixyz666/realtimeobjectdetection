@@ -15,7 +15,7 @@ class VideoSource:
             
         self.fps_limit = fps_limit
         self.cap = None
-        self._last_frame_time = 0
+        self._last_frame_time = 0.0
 
     def open(self) -> bool:
         logger.info(f"Opening video source: {self.source}")

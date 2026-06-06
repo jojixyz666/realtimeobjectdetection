@@ -84,6 +84,7 @@ def main():
                 if not ret:
                     logger.info("End of video stream or cannot fetch frame.")
                     break
+                assert frame is not None  # narrowed: ret=True guarantees frame exists
 
                 frame_id += 1
                 timestamp_str = datetime.now().isoformat()
