@@ -6,7 +6,7 @@ from app.utils import get_logger
 logger = get_logger()
 
 class VideoSource:
-    def __init__(self, source_input, fps_limit=0):
+    def __init__(self, source_input, fps_limit=0, resolution=None):
         # Convert "0" to integer 0 for webcam
         if isinstance(source_input, str) and source_input.isdigit():
             self.source = int(source_input)
@@ -14,6 +14,7 @@ class VideoSource:
             self.source = source_input
             
         self.fps_limit = fps_limit
+        self.resolution = resolution
         self.cap = None
         self._last_frame_time = 0.0
 
@@ -23,6 +24,20 @@ class VideoSource:
         if not self.cap.isOpened():
             logger.error(f"Failed to open source {self.source}")
             return False
+            
+        if self.resolution:
+            width, height = self.resolution
+            self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+            self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+            actual_w = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            actual_h = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            if actual_w != width or actual_h != height:
+                self.software_resize = (width, height)
+                logger.info(f"Requested resolution: {width}x{height}, Camera returned: {actual_w}x{actual_h}. Applying software resize.")
+            else:
+                self.software_resize = None
+                logger.info(f"Requested resolution: {width}x{height}, Actual: {actual_w}x{actual_h}")
+            
         return True
 
     def read(self) -> tuple[bool, np.ndarray | None]:
@@ -39,6 +54,10 @@ class VideoSource:
         
         ret, frame = self.cap.read()
         self._last_frame_time = time.time()
+        
+        if ret and getattr(self, 'software_resize', None):
+            frame = cv2.resize(frame, self.software_resize)
+            
         return ret, frame
 
     def release(self) -> None:

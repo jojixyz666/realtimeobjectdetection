@@ -4,6 +4,19 @@ Semua perubahan penting pada proyek **Real-Time Object Detection** ini akan dica
 
 ---
 
+## [1.1.0] - 2026-06-07
+
+### Ditambahkan
+- **Menu Interaktif CLI**: Penambahan menu pemilihan interaktif di terminal saat aplikasi dijalankan untuk memilih Model YOLO, Perangkat Keras (Device), dan Resolusi secara dinamis.
+- **Dukungan AMD GPU (DirectML)**: Penambahan dukungan akselerasi inferensi menggunakan AMD GPU melalui format ONNX dan *Execution Provider* DirectML, serta pilihan CPU dan NVIDIA GPU (CUDA).
+- **Auto-Resize Resolusi**: Fitur *software resize* otomatis sebagai *fallback* jika kamera perangkat keras tidak mendukung resolusi yang diminta pengguna.
+- **Pilihan Berbagai Model**: Kemampuan untuk memilih antara beberapa varian model secara instan (YOLOv8n, YOLOv8s, YOLOv11n, YOLO26n) atau jalur model custom.
+
+### Diubah
+- **Alur Eksekusi Utama (`main.py`)**: Diubah menjadi interaktif (menunggu input pengguna) saat dijalankan, kecuali argumen tertentu diberikan melalui command line.
+
+---
+
 ## [1.0.0] - 2026-06-06
 
 ### Ditambahkan

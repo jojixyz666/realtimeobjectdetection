@@ -5,6 +5,8 @@
 
 [![Python](https://img.shields.io/badge/Python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-blue?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)](https://pytorch.org)
+[![ONNX](https://img.shields.io/badge/ONNX-1.15.0+-005CED?style=for-the-badge&logo=onnx&logoColor=white)](https://onnx.ai/)
+[![DirectML](https://img.shields.io/badge/ONNX_Runtime_DML-1.17.0+-005CED?style=for-the-badge&logo=onnx&logoColor=white)](https://onnxruntime.ai/)
 [![OpenCV](https://img.shields.io/badge/OpenCV-4.13.0+-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white)](https://opencv.org)
 [![YOLO](https://img.shields.io/badge/YOLO-Ultralytics-FF6F00?style=for-the-badge&logo=ultralytics&logoColor=white)](https://github.com/ultralytics/ultralytics)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
@@ -24,9 +26,11 @@ Aplikasi deteksi objek secara langsung (real-time) berbasis kecerdasan buatan (A
 
 ## Fitur Utama
 
-- **Deteksi Real-Time Berperforma Tinggi** – Terintegrasi dengan PyTorch (mendukung akselerasi GPU CUDA) dan model YOLO untuk hasil inferensi yang cepat dan akurat.
-- **Input Fleksibel** – Mendukung input video dari berbagai sumber: Webcam internal/eksternal, IP Camera, file video lokal (`.mp4`, `.avi`, dll.), atau gambar statis.
-- **Konfigurasi Berbasis YAML** – Atur seluruh parameter aplikasi (sumber video, model, resolusi, threshold, dsb.) secara modular melalui [config.yaml](file:///d:/Development/pyhton/realtimeobjectdetection/config.yaml) tanpa mengubah kode program.
+- **Menu Interaktif CLI** – Memilih Model YOLO, Hardware Backend (Perangkat Keras), dan Resolusi Kamera secara dinamis dan interaktif langsung dari terminal.
+- **Deteksi Real-Time Berperforma Tinggi** – Mendukung akselerasi perangkat keras ganda: **NVIDIA GPU (CUDA)** via PyTorch dan **AMD GPU (DirectML)** via ONNX Runtime. Pilihan fallback ke CPU tersedia otomatis.
+- **Input Fleksibel & Auto-Resize** – Mendukung input video dari berbagai sumber (Webcam, IP Camera, file lokal). Dilengkapi sistem fallback auto-resize (software) jika kamera gagal memenuhi resolusi hardware yang diminta.
+- **Pilihan Berbagai Model YOLO** – Menyediakan opsi langsung ke berbagai varian model (YOLOv8n, YOLOv8s, YOLOv11n, YOLO26n) atau memuat model (custom path).
+- **Konfigurasi Berbasis YAML** – Atur seluruh parameter aplikasi (sumber video, model, resolusi, threshold, dsb.) secara modular melalui [config.yaml](file:///realtimeobjectdetection/config.yaml) tanpa mengubah kode program.
 - **Kontrol Keyboard Interaktif** – Kontrol jalannya deteksi langsung dari window layar Anda (Pause, Resume, Toggle Kotak Bounding, Toggle Info overlay, Ambil Screenshot).
 - **Output Kaya Data** – Opsi ekspor rekaman video beranotasi, penyimpanan screenshot instan, dan log deteksi objek berformat JSON.
 

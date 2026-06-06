@@ -52,7 +52,6 @@ class YOLO26Detector:
         logger.info(f"Loading YOLO model from {self.model_path} on device={self.device}...")
         try:
             # We use ultralytics YOLO class. If yolo26n.pt doesn't exist, it will try to download or fail.
-            # To handle the case where yolo26n.pt is a mockup name, we'll catch exceptions and fallback if possible.
             try:
                 self.model = YOLO(self.model_path)
             except Exception as e:
@@ -60,6 +59,47 @@ class YOLO26Detector:
                 logger.info("Attempting to fallback to models/yolo11n.pt...")
                 self.model_path = "models/yolo11n.pt"
                 self.model = YOLO(self.model_path)
+                
+            if self.device in ['dml', 'amd']:
+                # Prevent ultralytics from auto-installing cpu onnxruntime and breaking directml
+                os.environ["ULTRALYTICS_SKIP_REQUIREMENTS_CHECKS"] = "1"
+                
+                try:
+                    logger.info("AMD GPU (DirectML) requested. Preparing ONNX model...")
+                    if self.model_path.endswith('.pt'):
+                        onnx_path = self.model_path.replace('.pt', '.onnx')
+                        if not os.path.exists(onnx_path):
+                            logger.info(f"Exporting model to {onnx_path} for AMD GPU support...")
+                            self.model.export(format='onnx')
+                        self.model_path = onnx_path
+                        
+                    logger.info(f"Applying DirectML patch and loading ONNX model from {self.model_path}...")
+                    import onnxruntime as ort
+                    original_InferenceSession = ort.InferenceSession
+                    def custom_InferenceSession(path_or_bytes, sess_options=None, providers=None, provider_options=None, **kwargs):
+                        if providers is not None:
+                            if 'DmlExecutionProvider' not in providers:
+                                providers = ['DmlExecutionProvider'] + providers
+                        else:
+                            providers = ['DmlExecutionProvider', 'CPUExecutionProvider']
+                        return original_InferenceSession(path_or_bytes, sess_options, providers, provider_options, **kwargs)
+                    ort.InferenceSession = custom_InferenceSession
+                    
+                    import logging
+                    ul_logger = logging.getLogger("ultralytics")
+                    old_level = ul_logger.level
+                    ul_logger.setLevel(logging.WARNING)
+                    
+                    self.model = YOLO(self.model_path, task='detect')
+                    
+                    logger.info("Warming up AMD GPU model... Please wait.")
+                    import numpy as np
+                    dummy_img = np.zeros((self.imgsz, self.imgsz, 3), dtype=np.uint8)
+                    self.model(dummy_img, verbose=False, device=None)
+                    
+                    ul_logger.setLevel(old_level)
+                finally:
+                    pass
                 
             self.class_names = self.model.names
             logger.info("Model loaded successfully.")
@@ -72,13 +112,14 @@ class YOLO26Detector:
             return []
 
         # Run inference
+        device_arg = None if self.device in ["auto", "dml", "amd"] else self.device
         kwargs = {
             "source": frame,
             "conf": self.conf,
             "iou": self.iou,
             "imgsz": self.imgsz,
             "verbose": False,
-            "device": None if self.device == "auto" else self.device,
+            "device": device_arg,
             "half": self.half,
         }
         if self.classes:

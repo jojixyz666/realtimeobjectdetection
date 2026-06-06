@@ -10,6 +10,75 @@ from app.annotator import FrameAnnotator
 from app.output_manager import OutputManager
 from app.utils import setup_logger
 
+def show_model_menu(default_path):
+    print("\n" + "="*40)
+    print("        MODEL SELECTION MENU")
+    print("="*40)
+    print("1. YOLOv8n (yolov8n.pt) - Fast & Light")
+    print("2. YOLOv8s (yolov8s.pt) - Better Accuracy")
+    print("3. YOLOv11n (yolo11n.pt) - Latest YOLO")
+    print("4. YOLO26n (yolo26n.pt) - Config Default")
+    print("5. Custom Model Path")
+    print("="*40)
+    
+    choice = input("Select a model [1-5] (default 1): ").strip()
+    
+    if choice == '1' or choice == '':
+        return 'models/yolov8n.pt'
+    elif choice == '2':
+        return 'models/yolov8s.pt'
+    elif choice == '3':
+        return 'models/yolo11n.pt'
+    elif choice == '4':
+        return 'models/yolo26n.pt'
+    elif choice == '5':
+        custom = input("Enter custom model path: ").strip()
+        return custom if custom else default_path
+    else:
+        return 'models/yolov8n.pt'
+
+def show_device_menu(default_device):
+    print("\n" + "="*40)
+    print("        DEVICE SELECTION MENU")
+    print("="*40)
+    print("1. Auto (Default)")
+    print("2. CPU")
+    print("3. NVIDIA GPU (CUDA)")
+    print("4. AMD GPU (DirectML)")
+    print("="*40)
+    
+    choice = input("Select a device [1-4] (default 1): ").strip()
+    
+    if choice == '2':
+        return 'cpu'
+    elif choice == '3':
+        return 'cuda'
+    elif choice == '4':
+        return 'dml'
+    else:
+        return default_device
+
+def show_resolution_menu():
+    print("\n" + "="*40)
+    print("        RESOLUTION SELECTION MENU")
+    print("="*40)
+    print("1. 320 x 240   (Minimal)")
+    print("2. 640 x 480   (Default/SD)")
+    print("3. 1280 x 720  (HD)")
+    print("4. 1920 x 1080 (FHD)")
+    print("="*40)
+    
+    choice = input("Select resolution [1-4] (default 2): ").strip()
+    
+    if choice == '1':
+        return (320, 240)
+    elif choice == '3':
+        return (1280, 720)
+    elif choice == '4':
+        return (1920, 1080)
+    else:
+        return (640, 480)
+
 def main():
     # 1. Load Config
     config_mgr = ConfigManager()
@@ -21,12 +90,25 @@ def main():
     logger.info("Starting Realtime Object Detection Application...")
 
     # 3. Load Model
+    model_path = config_mgr.get('model', 'path', 'models/yolo26n.pt')
+    device = config_mgr.get('model', 'device', 'auto')
+    
+    if "--model" not in sys.argv:
+        # Prompt user if no model is explicitly provided via command line
+        model_path = show_model_menu(model_path)
+    
+    if "--device" not in sys.argv:
+        # Prompt user if no device is explicitly provided
+        device = show_device_menu(device)
+        
+    resolution = show_resolution_menu()
+    
     detector = YOLO26Detector(
-        model_path=config_mgr.get('model', 'path', 'yolo26n.pt'),
+        model_path=model_path,
         conf=config_mgr.get('model', 'conf_threshold', 0.5),
         iou=config_mgr.get('model', 'iou_threshold', 0.45),
         imgsz=config_mgr.get('model', 'imgsz', 640),
-        device=config_mgr.get('model', 'device', 'auto'),
+        device=device,
         classes=config_mgr.get('filter', 'classes'),
         half=config_mgr.get('model', 'half', False)
     )
@@ -35,7 +117,8 @@ def main():
     # 4. Open Source
     source = VideoSource(
         source_input=config_mgr.get('source', 'input', 0),
-        fps_limit=config_mgr.get('source', 'fps_limit', 0)
+        fps_limit=config_mgr.get('source', 'fps_limit', 0),
+        resolution=resolution
     )
     if not source.open():
         logger.error("Could not open video source. Exiting.")
@@ -135,7 +218,9 @@ def main():
                 if key in [ord('q'), ord('Q'), 27]: # Q or ESC
                     break
                 elif key in [ord('s'), ord('S')]: # Screenshot
-                    output_mgr.save_screenshot(annotated_frame if not is_paused else frame) # use last frame
+                    screenshot_img = annotated_frame if not is_paused else frame
+                    if screenshot_img is not None:
+                        output_mgr.save_screenshot(screenshot_img)
                 elif key == 32: # SPACE
                     is_paused = not is_paused
                     state = "Paused" if is_paused else "Resumed"

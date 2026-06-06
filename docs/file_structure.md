@@ -33,7 +33,6 @@ realtimeobjectdetection/
 ├── .gitkeep                    # File dummy untuk mempertahankan folder kosong di git
 ├── config.yaml                 # File konfigurasi UTAMA (Setting parameter deteksi, video, dll)
 ├── main.py                     # Skrip utama untuk menjalankan aplikasi (Entry point)
-├── prd.md                      # Product Requirements Document (Dokumen Spesifikasi Kebutuhan Aplikasi)
 ├── README.md                   # Halaman depan / Informasi singkat proyek
 └── requirements.txt            # Daftar pustaka (library) Python yang dibutuhkan
 ```
