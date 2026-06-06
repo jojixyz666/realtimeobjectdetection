@@ -1,3 +1,84 @@
-/models
-logs/app.log
-/venv
+# =======================
+# Python
+# =======================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+
+# =======================
+# Virtual Environment
+# =======================
+venv/
+env/
+.venv/
+.env/
+
+# =======================
+# Environment Variables
+# =======================
+.env
+.env.*
+!.env.example
+
+# =======================
+# Model Files (large binaries)
+# =======================
+models/*.pt
+models/*.pth
+models/*.onnx
+models/*.engine
+models/*.tflite
+models/*.weights
+# Keep folder structure
+!models/.gitkeep
+
+# =======================
+# Output Files
+# =======================
+output/*
+!output/.gitkeep
+
+# =======================
+# Logs
+# =======================
+logs/*.log
+logs/*.txt
+# Keep folder structure
+!logs/.gitkeep
+
+# =======================
+# IDE & Editors
+# =======================
+.vscode/
+.idea/
+*.suo
+*.user
+*.sublime-project
+*.sublime-workspace
+
+# =======================
+# OS Generated Files
+# =======================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =======================
+# Pytest & Coverage
+# =======================
+.pytest_cache/
+htmlcov/
+.coverage
+*.cover
+coverage.xml
+
+# =======================
+# Build & Distribution
+# =======================
+build/
+dist/
+*.egg-info/
+*.egg
