@@ -1,0 +1,42 @@
+# ============================================
+# Realtime Object Detection - Configuration
+# ============================================
+
+# Model Settings
+model:
+  path: "models/yolo26n.pt" # Path ke model (.pt file)
+  imgsz: 640                # Ukuran input gambar
+  conf_threshold: 0.50      # Confidence threshold
+  iou_threshold: 0.45       # IOU threshold
+  device: "auto"            # auto | cpu | cuda | mps
+  half: false               # FP16 inference (hanya GPU)
+
+# Source Settings
+source:
+  input: "0"                # 0=webcam, path file, RTSP URL
+  fps_limit: 0              # 0 = unlimited, >0 = limit FPS
+
+# Filter Settings
+filter:
+  classes: []               # Kosong = semua kelas
+  exclude_classes: []       # Kelas yang dikecualikan
+
+# Output Settings
+output:
+  show_window: true
+  window_name: "Object Detection"
+  show_fps: true
+  show_count: true
+  show_timestamp: false
+  bbox_thickness: 2
+  font_scale: 0.6
+  save_video: false
+  save_images: false
+  save_json: false
+  output_dir: "./output"
+  video_codec: "mp4v"
+
+# Logging
+logging:
+  level: "INFO"             # DEBUG | INFO | WARNING | ERROR
+  log_file: "logs/app.log"
