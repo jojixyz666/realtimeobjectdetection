@@ -1,7 +1,7 @@
 <div align="center">
 
 # 🎥 Real-Time Object Detection
-### 🚀 Tugas Besar Computer Vision 2023
+### 🚀 Tugas Besar Computer Vision 2026
 
 [![Python](https://img.shields.io/badge/Python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-blue?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)](https://pytorch.org)
@@ -90,7 +90,7 @@ Aplikasi ini didevel dan diserahkan sebagai tugas mata kuliah:
 <table>
   <tr>
     <td><b>Mata Kuliah</b></td>
-    <td>Computer Vision 2023</td>
+    <td>Computer Vision 2026</td>
   </tr>
   <tr>
     <td><b>Nama Lengkap</b></td>
